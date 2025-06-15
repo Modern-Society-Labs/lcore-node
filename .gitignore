@@ -7,3 +7,11 @@ build/
 coverage/
 target/
 Cargo.lock
+
+# Database
+*.db
+*.db-journal
+
+# IDE-specific
+.vscode/
+.idea/
