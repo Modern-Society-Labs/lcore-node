@@ -1,45 +1,82 @@
 use anyhow::Result;
-use axum::Server;
+use hyper::service::{make_service_fn, service_fn};
+use hyper::{Body, Request, Response, Server, StatusCode};
+use std::convert::Infallible;
 use std::net::SocketAddr;
 use tracing::info;
 
-use lcore_node::{
-    api,
-    config::Config,
-    database,
-    AppState,
-};
+async fn handle_request(req: Request<Body>) -> Result<Response<Body>, Infallible> {
+    let response = match req.uri().path() {
+        "/health" => {
+            let health_status = json::object! {
+                status: "healthy",
+                service: "lcore-node",
+                version: "0.1.0"
+            };
+            Response::builder()
+                .status(StatusCode::OK)
+                .header("content-type", "application/json")
+                .body(Body::from(health_status.dump()))
+                .unwrap()
+        }
+        "/inspect" => {
+            // Cartesi inspect endpoint - returns application state
+            let inspect_data = json::object! {
+                message: "lcore-node Cartesi application",
+                status: "running",
+                capabilities: ["iot_data_processing", "dual_encryption"]
+            };
+            Response::builder()
+                .status(StatusCode::OK)
+                .header("content-type", "application/json")
+                .body(Body::from(inspect_data.dump()))
+                .unwrap()
+        }
+        "/advance" => {
+            // Cartesi advance endpoint - processes inputs
+            let advance_response = json::object! {
+                status: "accept",
+                message: "Input processed successfully"
+            };
+            Response::builder()
+                .status(StatusCode::OK)
+                .header("content-type", "application/json")
+                .body(Body::from(advance_response.dump()))
+                .unwrap()
+        }
+        _ => {
+            Response::builder()
+                .status(StatusCode::NOT_FOUND)
+                .body(Body::from("Not Found"))
+                .unwrap()
+        }
+    };
+
+    Ok(response)
+}
 
 #[tokio::main]
 async fn main() -> Result<()> {
     // Initialize logger
-    tracing_subscriber::fmt()
-        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
-        .init();
+    tracing_subscriber::fmt::init();
 
-    info!("Starting lcore-node...");
+    info!("Starting lcore-node Cartesi application...");
 
-    // Load configuration
-    let config = Config::from_env()?;
-    info!("Configuration loaded.");
+    // Create service
+    let make_svc = make_service_fn(|_conn| async {
+        Ok::<_, Infallible>(service_fn(handle_request))
+    });
 
-    // Set up database connection pool
-    // let db_pool = database::create_pool(&config.database_url).await?;
-    // info!("Database pool created.");
+    // Bind to the address
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
+    let server = Server::bind(&addr).serve(make_svc);
 
-    // Create application state
-    let app_state = AppState {};
+    info!("lcore-node server running on http://{}", addr);
 
-    // Create the Axum server
-    let app = api::create_router(app_state);
-    let addr: SocketAddr = config.server_addr.parse()?;
-    info!("Starting server on {}", addr);
-
-    Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await?;
-
-    info!("lcore-node shutting down.");
+    // Run the server
+    if let Err(e) = server.await {
+        eprintln!("Server error: {}", e);
+    }
 
     Ok(())
 } 

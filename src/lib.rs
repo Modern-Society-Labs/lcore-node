@@ -1,12 +1,22 @@
-pub mod api;
-pub mod config;
-pub mod database;
-pub mod encryption;
+// lcore-node: Cartesi-based IoT data processing node
+// This module provides the core functionality for processing IoT data
+// within a Cartesi rollups environment
+
 pub mod error;
 
-/// The application state, which will be shared across all request handlers.
-#[derive(Clone)]
+use serde::{Deserialize, Serialize};
+
+// Basic IoT data structure
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IoTData {
+    pub device_id: String,
+    pub timestamp: u64,
+    pub data: serde_json::Value,
+}
+
+// Application state for Cartesi integration
+#[derive(Debug, Clone)]
 pub struct AppState {
-    // pub db_pool: sqlx::SqlitePool,
-    // pub config: config::Config,
+    // Future: Add SQLite database connection
+    // Future: Add encryption state
 } 
