@@ -2,40 +2,31 @@
 
 `lcore-node` is the core Cartesi application for the IoT-L{CORE} ecosystem. It runs inside the Cartesi Machine VM and provides complete IoT data processing with dual encryption, device authentication, and fraud-proof capabilities.
 
-## 🎯 **Current Status: Phase 3 Complete**
-
-**Complete IoT Application Implementation** ✅
+**Complete IoT Application Implementation** 
 
 All IoT application logic has been successfully implemented within the Cartesi VM environment and is ready for production deployment.
 
 ### **Implemented Features**
 
-- ✅ **Dual Encryption System**: AES-256-GCM + XChaCha20-Poly1305 with deterministic nonces
-- ✅ **SQLite Database**: Complete schema with devices, sensor_data, device_counters, analytics
-- ✅ **Device Authentication**: W3C DID + IETF JOSE signature verification
-- ✅ **Cartesi Handlers**: Action-based advance/inspect handlers for IoT data pipeline
-- ✅ **Deterministic Execution**: All operations designed for fraud-proof compatibility
+- **Dual Encryption System**: AES-256-GCM + XChaCha20-Poly1305 with deterministic nonces
+- **SQLite Database**: Complete schema with devices, sensor_data, device_counters, analytics
+- **Device Authentication**: W3C DID + IETF JOSE signature verification
+- **Cartesi Handlers**: Action-based advance/inspect handlers for IoT data pipeline
+- **Deterministic Execution**: All operations designed for fraud-proof compatibility
 
-### **Testing Status**
-
-- ✅ **5/6 Comprehensive Tests Passing** - Production Ready
-- ✅ **Device Registration**: Working with W3C DID and transaction processing
-- ✅ **Data Submission**: JWS signature verification and dual encryption operational
-- ✅ **Pipeline Verification**: End-to-end IoT data flow from device to SQLite confirmed
-
-## 🚨 **Database Architecture (Both Implemented)**
+## 🚨 **Database Architecture**
 
 **Two Separate Databases Working Together:**
 
-1. **PostgreSQL Database (External - Supabase)**: ✅ **OPERATIONAL**
+1. **PostgreSQL Database (External - Supabase)**
    - **Purpose**: Cartesi rollups-node state management
    - **Location**: External to Cartesi Machine (managed by Supabase)
    - **Contains**: Rollups metadata, epoch management, input processing state
    - **Used by**: Cartesi rollups infrastructure
 
-2. **SQLite Database (Internal - Our Application)**: ✅ **IMPLEMENTED**
+2. **SQLite Database (Internal - Our Application)**
    - **Purpose**: IoT application logic and encrypted data storage  
-   - **Location**: INSIDE the Cartesi Machine VM (`/data/iot.db`)
+   - **Location**: Inside the Cartesi Machine VM (`/data/iot.db`)
    - **Contains**: Encrypted IoT data, device registrations, processing results
    - **Used by**: Our `lcore-node` Rust application
 
@@ -274,14 +265,6 @@ curl -X POST http://localhost:8080/device/register \
      -d '{"device_id":"test_001","did_document":"...","public_key":"..."}'
 ```
 
-## 📈 **Performance Metrics**
-
-- **VM Image Size**: 9.17MB ext2 filesystem
-- **Memory Usage**: 128Mi RAM configuration
-- **Throughput**: 500+ data entries/day tested
-- **Encryption**: Sub-millisecond dual encryption processing
-- **Database**: Efficient SQLite operations within VM
-
 ## 🔍 **Latest Snapshot Details**
 
 - **Template Hash**: `0x6961841b8923b3d2e85e381d5de13a200f462729a6847df13442b974b52024e0`
@@ -309,15 +292,6 @@ hex = "0.4"
 chrono = { version = "0.4", features = ["serde"] }
 byteorder = "1.5"
 ```
-
-## 🚀 **Production Deployment**
-
-The application is ready for production deployment with:
-
-1. **Complete IoT Logic**: All encryption, authentication, and database operations implemented
-2. **Fraud-Proof Ready**: Deterministic execution for dispute resolution
-3. **Scalable Architecture**: Multi-city chain deployment support
-4. **Production Snapshots**: Reliable build system for VM images
 
 ## 📄 **License**
 
