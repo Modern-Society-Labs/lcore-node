@@ -1,2 +1,29 @@
-.cartesi
-target
+# Cartesi snapshots and build artifacts
+.cartesi/
+target/
+Cargo.lock
+
+# Docker build context
+.dockerignore
+
+# Environment files
+.env
+*.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+_memory_health_test
